@@ -2,7 +2,6 @@ import pyshark
 
 throughput = 0
 average_latency = 0
-latency_display = 0
 
 timespan = 0
 bits = 0
@@ -15,9 +14,14 @@ latency = 0
 total_time = 0
 total_latency = 0
 # delay = 0
+total_packet_loss = 0
+packet_loss = 0
 
-cap = pyshark.FileCapture('ipip/10mb/4.pcapng', only_summaries=True)
+cap = pyshark.FileCapture('gre/50mb/2.pcapng', only_summaries=True)
 cap
+
+filtered_cap = pyshark.FileCapture('gre/50mb/2.pcapng', only_summaries=True, display_filter='tcp.analysis.retransmission')
+filtered_cap
 
 for pkt in cap:
     src_addr = pkt.source
@@ -40,8 +44,16 @@ for pkt in cap:
         timespan = total_time
         bits = bytes * 8
         average_latency = total_latency / total_packets
+
+for retransmission in filtered_cap:
+    src_addr = retransmission.source
+
+    if(src_addr == '10.0.0.114'):
+        total_packet_loss += 1
+
 kilobits = bits / 1000
 throughput = kilobits/timespan
+packet_loss = (total_packet_loss/total_packets) * 100
 
 print(bits, "bits")
 print(bytes, "bytes")
@@ -49,6 +61,8 @@ print("timespan", timespan, "s")
 print("total_packets", total_packets, "packets")
 print("throughput", throughput, "kb/s")
 print("average_latency", average_latency, "s")
+print("total_packet_loss", total_packet_loss, "packets")
+print("packet_loss", packet_loss, "%")
 
 print("")
 
