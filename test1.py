@@ -87,7 +87,7 @@ for scenario in scenario:
                 src_addr = packet.source
 
                 if(src_addr == '10.0.0.114'):
-                    total_packet_loss += 1
+                    total_packet_lost += 1
 
             kilobits = bits / 1000
             throughput = kilobits/timespan
@@ -123,5 +123,6 @@ for scenario in scenario:
         worksheet.write(row, 7, sum_total_packet_lost / counter)
         worksheet.write(
             row, 8, (sum_total_packet_lost / sum_total_packets) * 100)
+        row += 1
 
 workbook.close()
